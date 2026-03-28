@@ -25,19 +25,16 @@
     --green-light: #E1F5EE;
     --red: #E24B4A;
     --amber: #BA7517;
-    --yellow-light: #FFF3CD;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1a1a18;
-      --surface: #242422;
-      --surface2: #2e2e2b;
-      --border: rgba(255,255,255,0.10);
-      --border2: rgba(255,255,255,0.20);
-      --text: #f0ede6;
-      --text2: #a0a09a;
-      --text3: #6a6a65;
+      --bg: #1a1a18; --surface: #242422; --surface2: #2e2e2b;
+      --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.20);
+      --text: #f0ede6; --text2: #a0a09a; --text3: #6a6a65;
+      --green-light: rgba(29,158,117,0.15); --blue-light: rgba(24,95,165,0.18);
     }
   }
 
@@ -47,320 +44,228 @@
     color: var(--text);
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 3rem;
   }
 
-  .container {
-    width: 100%;
-    max-width: 520px;
-  }
+  .container { width: 100%; max-width: 560px; }
 
-  .header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
+  .title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+  .title span { color: var(--green); }
 
-  .title {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+  /* TABS */
+  .tabs { display: flex; margin-bottom: 1.25rem; border: 0.5px solid var(--border2); border-radius: var(--radius-md); overflow: hidden; }
+  .tab-btn {
+    flex: 1; background: transparent; border: none; border-right: 0.5px solid var(--border2);
+    padding: 10px 8px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--text2); cursor: pointer; transition: background 0.13s, color 0.13s;
   }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { background: var(--surface); color: var(--text); }
+  .tab-btn.active { background: var(--text); color: var(--bg); }
 
-  .title span {
-    color: var(--green);
-  }
+  .panel { display: none; }
+  .panel.active { display: block; }
 
-  #round-indicator {
-    font-size: 13px;
-    color: var(--text2);
-    font-family: 'Space Mono', monospace;
-  }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-    margin-bottom: 1.25rem;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border-radius: var(--radius-md);
-    padding: 10px 12px;
-    text-align: center;
-    border: 0.5px solid var(--border);
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  .stat-value {
-    font-family: 'Space Mono', monospace;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 1.25rem; }
+  .stats-row-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 1.25rem; }
+  .stat-card { background: var(--surface); border-radius: var(--radius-md); padding: 10px 12px; text-align: center; border: 0.5px solid var(--border); }
+  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-family: 'Space Mono', monospace; }
+  .stat-value { font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700; color: var(--text); }
   .stat-value.best { color: var(--green); }
+  .stat-value.accent { color: var(--blue); }
 
-  /* === ARENA === */
+  /* REACTION ARENA */
   .arena {
-    border-radius: var(--radius-xl);
-    border: 0.5px solid var(--border);
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    min-height: 280px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.12s, border-color 0.12s;
-    padding: 2rem;
-    text-align: center;
+    border-radius: var(--radius-xl); border: 0.5px solid var(--border); background: var(--surface);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; min-height: 260px; overflow: hidden;
+    transition: background 0.12s, border-color 0.12s; padding: 2rem; text-align: center;
   }
-
   .arena.waiting  { background: var(--surface); }
   .arena.ready    { background: #c0392b; border-color: transparent; }
   .arena.go       { background: var(--green); border-color: transparent; }
   .arena.early    { background: var(--amber); border-color: transparent; }
-  .arena.result   { background: var(--surface); }
-  .arena.done     { background: var(--surface); }
+  .arena.result, .arena.done { background: var(--surface); }
+  .arena-icon { font-size: 48px; margin-bottom: 12px; line-height: 1; }
+  .arena-msg { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+  .arena.go .arena-msg, .arena.ready .arena-msg, .arena.early .arena-msg { color: #fff; }
+  .arena.go .arena-sub, .arena.ready .arena-sub, .arena.early .arena-sub { color: rgba(255,255,255,0.78); }
+  .arena-sub { font-size: 13px; color: var(--text2); margin-top: 6px; font-family: 'Space Mono', monospace; }
 
-  .arena-icon {
-    font-size: 52px;
-    margin-bottom: 14px;
-    line-height: 1;
-  }
+  /* HISTORY */
+  .history-row { display: flex; gap: 5px; margin-top: 1rem; align-items: flex-end; height: 48px; }
+  .history-bar { flex: 1; border-radius: 3px; min-height: 4px; transition: height 0.3s ease; }
 
-  .arena-msg {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-  }
-
-  .arena.go .arena-msg,
-  .arena.ready .arena-msg,
-  .arena.early .arena-msg { color: #fff; }
-
-  .arena.go .arena-sub,
-  .arena.ready .arena-sub,
-  .arena.early .arena-sub { color: rgba(255,255,255,0.78); }
-
-  .arena-sub {
-    font-size: 14px;
-    color: var(--text2);
-    margin-top: 6px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  .big-time {
-    font-family: 'Space Mono', monospace;
-    font-size: 54px;
-    font-weight: 700;
-    letter-spacing: -2px;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  /* === HISTORY BARS === */
-  .history-row {
-    display: flex;
-    gap: 5px;
-    margin-top: 1rem;
-    align-items: flex-end;
-    height: 52px;
-  }
-
-  .history-bar {
-    flex: 1;
-    border-radius: 3px;
-    min-height: 4px;
-    transition: height 0.3s ease;
-    cursor: default;
-  }
-
-  /* === BUTTONS === */
-  .bottom-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 0.75rem;
-  }
-
+  /* BUTTONS */
+  .bottom-row { display: flex; gap: 8px; margin-top: 0.75rem; }
   .btn {
-    flex: 1;
-    border: 0.5px solid var(--border2);
-    background: transparent;
-    color: var(--text);
-    border-radius: var(--radius-md);
-    padding: 11px 16px;
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.13s, transform 0.08s;
+    flex: 1; border: 0.5px solid var(--border2); background: transparent; color: var(--text);
+    border-radius: var(--radius-md); padding: 11px 16px; font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.13s, transform 0.08s;
   }
-
   .btn:hover { background: var(--surface2); }
   .btn:active { transform: scale(0.98); }
-
-  .btn.primary {
-    background: var(--text);
-    color: var(--bg);
-    border-color: transparent;
-  }
-
+  .btn.primary { background: var(--text); color: var(--bg); border-color: transparent; }
   .btn.primary:hover { opacity: 0.85; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  /* === LEADERBOARD === */
-  .leaderboard {
-    margin-top: 1.5rem;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-
-  .lb-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--surface);
-    border-bottom: 0.5px solid var(--border);
-    font-size: 13px;
-    font-weight: 700;
-  }
-
+  /* LEADERBOARD */
+  .leaderboard { margin-top: 1.5rem; border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .lb-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface); border-bottom: 0.5px solid var(--border); font-size: 13px; font-weight: 700; }
   .lb-header span { color: var(--text2); font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 400; }
-
-  .lb-row {
-    display: grid;
-    grid-template-columns: 28px 1fr 80px 80px;
-    gap: 8px;
-    align-items: center;
-    padding: 8px 14px;
-    border-bottom: 0.5px solid var(--border);
-    font-size: 13px;
-  }
-
+  .lb-row { display: grid; grid-template-columns: 28px 1fr 80px 80px; gap: 8px; align-items: center; padding: 8px 14px; border-bottom: 0.5px solid var(--border); font-size: 13px; }
   .lb-row:last-child { border-bottom: none; }
   .lb-row.new-entry { background: var(--green-light); }
-
-  @media (prefers-color-scheme: dark) {
-    .lb-row.new-entry { background: rgba(29,158,117,0.15); }
-  }
-
+  .aim-lb-row { display: grid; grid-template-columns: 28px 1fr 52px 60px 64px; gap: 6px; align-items: center; padding: 8px 14px; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .aim-lb-row:last-child { border-bottom: none; }
+  .aim-lb-row.new-entry { background: var(--blue-light); }
   .lb-rank { font-family: 'Space Mono', monospace; color: var(--text3); font-size: 12px; }
   .lb-date { color: var(--text2); font-family: 'Space Mono', monospace; font-size: 11px; }
   .lb-score { font-family: 'Space Mono', monospace; font-weight: 700; text-align: right; }
   .lb-avg { font-family: 'Space Mono', monospace; color: var(--text2); font-size: 12px; text-align: right; }
+  .no-sessions { padding: 1.5rem; text-align: center; color: var(--text3); font-size: 13px; font-family: 'Space Mono', monospace; }
+  .footer { margin-top: 1rem; text-align: center; font-size: 12px; color: var(--text3); font-family: 'Space Mono', monospace; }
 
-  .no-sessions {
-    padding: 1.5rem;
-    text-align: center;
-    color: var(--text3);
-    font-size: 13px;
-    font-family: 'Space Mono', monospace;
-  }
+  /* AIM MODE BUTTONS */
+  .aim-mode-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .mode-btn { flex: 1; border: 0.5px solid var(--border2); background: transparent; color: var(--text2); border-radius: var(--radius-md); padding: 9px 12px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.13s, color 0.13s; text-align: center; }
+  .mode-btn:hover { background: var(--surface); color: var(--text); }
+  .mode-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
 
-  .footer {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text3);
-    font-family: 'Space Mono', monospace;
+  /* AIM ARENA */
+  .aim-arena {
+    border-radius: var(--radius-xl); border: 0.5px solid var(--border);
+    background: var(--surface); position: relative; overflow: hidden;
+    width: 100%; height: 320px;
   }
+  .aim-arena.idle { display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .aim-arena.active { cursor: crosshair; }
+  .aim-idle-msg { text-align: center; }
+  .aim-idle-msg .icon { font-size: 44px; margin-bottom: 10px; }
+  .aim-idle-msg .msg { font-size: 20px; font-weight: 800; }
+  .aim-idle-msg .sub { font-size: 13px; color: var(--text2); margin-top: 4px; font-family: 'Space Mono', monospace; }
+  #aim-canvas { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+  /* TIMER BAR */
+  .timer-bar-wrap { height: 4px; background: var(--surface2); border-radius: 2px; margin-top: 0.75rem; overflow: hidden; }
+  .timer-bar { height: 100%; background: var(--blue); border-radius: 2px; width: 100%; }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <div class="title">Reaction<span>.</span>Trainer</div>
-    <div id="round-indicator">round 0/10</div>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-label">last</div>
-      <div class="stat-value" id="stat-last">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">avg</div>
-      <div class="stat-value" id="stat-avg">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">best</div>
-      <div class="stat-value best" id="stat-best">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">total</div>
-      <div class="stat-value" id="stat-score">0</div>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-reaction" onclick="switchTab('reaction')">⚡ Reaction</button>
+    <button class="tab-btn" id="tab-aim" onclick="switchTab('aim')">🎯 Aim Training</button>
   </div>
 
-  <div class="arena waiting" id="arena" onclick="handleClick()">
-    <div class="arena-icon" id="arena-icon">⚡</div>
-    <div class="arena-msg" id="arena-msg">Click to start</div>
-    <div class="arena-sub" id="arena-sub">10 rounds · click when green</div>
-  </div>
-
-  <div class="history-row" id="history-row"></div>
-
-  <div class="bottom-row">
-    <button class="btn" onclick="resetGame(true)">Reset</button>
-    <button class="btn primary" id="action-btn" onclick="handleClick()">Start</button>
-  </div>
-
-  <div class="leaderboard" id="leaderboard">
-    <div class="lb-header">
-      Past sessions <span>lower ms = better</span>
+  <!-- ===== REACTION PANEL ===== -->
+  <div class="panel active" id="panel-reaction">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">last</div><div class="stat-value" id="stat-last">—</div></div>
+      <div class="stat-card"><div class="stat-label">avg</div><div class="stat-value" id="stat-avg">—</div></div>
+      <div class="stat-card"><div class="stat-label">best</div><div class="stat-value best" id="stat-best">—</div></div>
+      <div class="stat-card"><div class="stat-label">total</div><div class="stat-value" id="stat-score">0ms</div></div>
     </div>
-    <div id="lb-body"><div class="no-sessions">no sessions yet — play a full round!</div></div>
+
+    <div style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:6px;" id="round-indicator">round 0/10</div>
+
+    <div class="arena waiting" id="arena" onclick="handleClick()">
+      <div class="arena-icon" id="arena-icon">⚡</div>
+      <div class="arena-msg" id="arena-msg">Click to start</div>
+      <div class="arena-sub" id="arena-sub">10 rounds · click when green</div>
+    </div>
+
+    <div class="history-row" id="history-row"></div>
+
+    <div class="bottom-row">
+      <button class="btn" onclick="resetGame(true)">Reset</button>
+      <button class="btn primary" id="action-btn" onclick="handleClick()">Start</button>
+    </div>
+
+    <div class="leaderboard">
+      <div class="lb-header">Past sessions <span>lower ms = better</span></div>
+      <div id="lb-body"><div class="no-sessions">no sessions yet — play a full round!</div></div>
+    </div>
+    <div class="footer">space bar to click · sessions saved locally</div>
   </div>
 
-  <div class="footer">press space bar to click · data saved in your browser</div>
+  <!-- ===== AIM PANEL ===== -->
+  <div class="panel" id="panel-aim">
+    <div class="aim-mode-row">
+      <button class="mode-btn active" id="mode-flick" onclick="setAimMode('flick')">Flick</button>
+      <button class="mode-btn" id="mode-track" onclick="setAimMode('track')">Tracking</button>
+    </div>
+
+    <div class="stats-row-3">
+      <div class="stat-card"><div class="stat-label" id="aim-label-a">hits</div><div class="stat-value accent" id="aim-stat-a">—</div></div>
+      <div class="stat-card"><div class="stat-label" id="aim-label-b">misses</div><div class="stat-value" id="aim-stat-b">—</div></div>
+      <div class="stat-card"><div class="stat-label" id="aim-label-c">accuracy</div><div class="stat-value best" id="aim-stat-c">—</div></div>
+    </div>
+
+    <div class="aim-arena idle" id="aim-arena">
+      <div class="aim-idle-msg" id="aim-idle">
+        <div class="icon">🎯</div>
+        <div class="msg" id="aim-idle-msg">Click to start</div>
+        <div class="sub" id="aim-idle-sub">20 targets · click each one fast</div>
+      </div>
+      <canvas id="aim-canvas"></canvas>
+    </div>
+
+    <div class="timer-bar-wrap"><div class="timer-bar" id="aim-timer-bar"></div></div>
+
+    <div class="bottom-row">
+      <button class="btn" onclick="resetAim(true)">Reset</button>
+      <button class="btn primary" id="aim-action-btn" onclick="startAimGame()">Start</button>
+    </div>
+
+    <div class="leaderboard">
+      <div class="lb-header">Past sessions <span>higher accuracy = better</span></div>
+      <div id="aim-lb-body"><div class="no-sessions">no sessions yet — finish a round!</div></div>
+    </div>
+    <div class="footer">flick: click targets fast · tracking: keep mouse on moving target</div>
+  </div>
 </div>
 
 <script>
+/* ============================================================ TAB SWITCHING */
+function switchTab(tab) {
+  ['reaction','aim'].forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'aim') renderAimLeaderboard();
+}
+
+/* ============================================================ REACTION GAME */
 const MAX_ROUNDS = 10;
-let state = 'idle';
-let goTimer = null;
-let startTime = null;
-let results = [];
-let round = 0;
-let score = 0;
-let newEntryIndex = -1;
+let state = 'idle', goTimer = null, startTime = null;
+let results = [], round = 0, score = 0, newEntryIndex = -1, pendingSession = null;
 
-const arena = document.getElementById('arena');
-const arenaMsg = document.getElementById('arena-msg');
-const arenaSub = document.getElementById('arena-sub');
+const arena     = document.getElementById('arena');
+const arenaMsg  = document.getElementById('arena-msg');
+const arenaSub  = document.getElementById('arena-sub');
 const arenaIcon = document.getElementById('arena-icon');
-const statLast = document.getElementById('stat-last');
-const statAvg = document.getElementById('stat-avg');
-const statBest = document.getElementById('stat-best');
+const statLast  = document.getElementById('stat-last');
+const statAvg   = document.getElementById('stat-avg');
+const statBest  = document.getElementById('stat-best');
 const statScore = document.getElementById('stat-score');
-const roundInd = document.getElementById('round-indicator');
-const histRow = document.getElementById('history-row');
+const roundInd  = document.getElementById('round-indicator');
+const histRow   = document.getElementById('history-row');
 const actionBtn = document.getElementById('action-btn');
-const lbBody = document.getElementById('lb-body');
+const lbBody    = document.getElementById('lb-body');
 
-// Spacebar support
 document.addEventListener('keydown', e => {
   if (e.code === 'Space' && e.target === document.body) {
     e.preventDefault();
-    handleClick();
+    if (document.getElementById('panel-reaction').classList.contains('active')) handleClick();
   }
 });
 
@@ -384,181 +289,442 @@ function setArena(cls, icon, msg, sub) {
 function handleClick() {
   if (state === 'idle' || state === 'done') { resetGame(false); startRound(); return; }
   if (state === 'waiting' || state === 'ready') {
-    clearTimeout(goTimer);
-    state = 'early';
+    clearTimeout(goTimer); state = 'early';
     setArena('early', '⚠️', 'Too early!', 'wait for green · click to retry');
-    actionBtn.textContent = 'Retry';
-    actionBtn.disabled = false;
-    return;
+    actionBtn.textContent = 'Retry'; actionBtn.disabled = false; return;
   }
-  if (state === 'go') {
-    const ms = Date.now() - startTime;
-    clearTimeout(goTimer);
-    recordResult(ms);
-    return;
-  }
-  if (state === 'early' || state === 'result') {
-    startRound();
-  }
+  if (state === 'go') { const ms = Date.now() - startTime; clearTimeout(goTimer); recordResult(ms); return; }
+  if (state === 'early' || state === 'result') startRound();
 }
 
 function startRound() {
   if (round >= MAX_ROUNDS) { showDone(); return; }
   state = 'waiting';
   setArena('waiting', '👁', 'Get ready...', 'wait for green, then click!');
-  actionBtn.textContent = 'Waiting...';
-  actionBtn.disabled = true;
-
+  actionBtn.textContent = 'Waiting...'; actionBtn.disabled = true;
   const delay = 1000 + Math.random() * 2000;
   goTimer = setTimeout(() => {
-    state = 'go';
-    startTime = Date.now();
+    state = 'go'; startTime = Date.now();
     setArena('go', '🟢', 'CLICK NOW!', '');
-    actionBtn.textContent = 'Click!';
-    actionBtn.disabled = false;
-    goTimer = setTimeout(() => {
-      if (state === 'go') recordResult(2000);
-    }, 2000);
+    actionBtn.textContent = 'Click!'; actionBtn.disabled = false;
+    goTimer = setTimeout(() => { if (state === 'go') recordResult(2000); }, 2000);
   }, delay);
 }
 
 function recordResult(ms) {
-  state = 'result';
-  round++;
+  state = 'result'; round++;
   const clamped = Math.min(ms, 2000);
-  results.push(clamped);
-
-  const rating = getRating(clamped);
-  score += clamped;
-
-  const avg = Math.round(results.reduce((a,b) => a+b, 0) / results.length);
+  results.push(clamped); score += clamped;
+  const avg = Math.round(results.reduce((a,b)=>a+b,0)/results.length);
   const best = Math.min(...results);
-
-  statLast.textContent = clamped + 'ms';
-  statAvg.textContent = avg + 'ms';
-  statBest.textContent = best + 'ms';
+  statLast.textContent  = clamped + 'ms';
+  statAvg.textContent   = avg + 'ms';
+  statBest.textContent  = best + 'ms';
   statScore.textContent = score + 'ms';
-  roundInd.textContent = `round ${round}/${MAX_ROUNDS}`;
-
+  roundInd.textContent  = `round ${round}/${MAX_ROUNDS}`;
   if (clamped >= 2000) {
-    setArena('result', '⏱', 'Too slow!', `+2000ms penalty · click for next`);
+    setArena('result', '⏱', 'Too slow!', '+2000ms penalty · click for next');
   } else {
     setArena('result', '✓',
-      `<span style="font-family:'Space Mono',monospace;font-size:48px;font-weight:700;letter-spacing:-2px">${clamped}ms</span>`,
-      `${rating} · click for next`
-    );
+      `<span style="font-family:'Space Mono',monospace;font-size:44px;font-weight:700;letter-spacing:-2px">${clamped}ms</span>`,
+      `${getRating(clamped)} · click for next`);
   }
-
   updateHistory();
-
-  if (round >= MAX_ROUNDS) {
-    actionBtn.textContent = 'See results';
-    setTimeout(showDone, 1000);
-  } else {
-    actionBtn.textContent = 'Next round';
-  }
+  if (round >= MAX_ROUNDS) { actionBtn.textContent = 'See results'; setTimeout(showDone, 900); }
+  else actionBtn.textContent = 'Next round';
   actionBtn.disabled = false;
 }
 
 function updateHistory() {
   const max = Math.max(...results, 600);
   histRow.innerHTML = results.map(r => {
-    const pct = Math.max(8, Math.round((r / max) * 100));
-    const color = r < 200 ? '#1D9E75' : r < 300 ? '#639922' : r < 400 ? '#BA7517' : '#E24B4A';
+    const pct = Math.max(8, Math.round((r/max)*100));
+    const color = r<200?'#1D9E75':r<300?'#639922':r<400?'#BA7517':'#E24B4A';
     return `<div class="history-bar" style="height:${pct}%;background:${color}" title="${r}ms"></div>`;
   }).join('');
 }
 
-let pendingSession = null;
-
 function showDone() {
   state = 'done';
-  const avg = Math.round(results.reduce((a,b) => a+b, 0) / results.length);
+  const avg = Math.round(results.reduce((a,b)=>a+b,0)/results.length);
   const best = Math.min(...results);
-  const rating = getRating(avg);
-  if (pendingSession) {
-    saveSession(pendingSession.score, pendingSession.avg, pendingSession.best);
-  }
+  if (pendingSession) saveSession(pendingSession.score, pendingSession.avg, pendingSession.best);
   pendingSession = { score, avg, best };
-  setArena('done', '🏁',
-    `Done! ${score}ms total`,
-    `avg ${avg}ms · best ${best}ms · ${rating}`
-  );
-  actionBtn.textContent = 'Play again';
-  actionBtn.disabled = false;
+  setArena('done', '🏁', `Done! ${score}ms total`, `avg ${avg}ms · best ${best}ms · ${getRating(avg)}`);
+  actionBtn.textContent = 'Play again'; actionBtn.disabled = false;
 }
 
 function resetGame(savePending) {
-  if (savePending && pendingSession) {
-    saveSession(pendingSession.score, pendingSession.avg, pendingSession.best);
-  }
-  pendingSession = null;
-  clearTimeout(goTimer);
-  state = 'idle';
-  results = [];
-  round = 0;
-  score = 0;
-  statLast.textContent = '—';
-  statAvg.textContent = '—';
-  statBest.textContent = '—';
-  statScore.textContent = '0ms';
-  roundInd.textContent = 'round 0/10';
-  histRow.innerHTML = '';
-  newEntryIndex = -1;
-  setArena('waiting', '⚡', 'Click to start', '10 rounds · click when green');
-  actionBtn.textContent = 'Start';
-  actionBtn.disabled = false;
+  if (savePending && pendingSession) saveSession(pendingSession.score, pendingSession.avg, pendingSession.best);
+  pendingSession = null; clearTimeout(goTimer);
+  state = 'idle'; results = []; round = 0; score = 0;
+  statLast.textContent='—'; statAvg.textContent='—'; statBest.textContent='—';
+  statScore.textContent='0ms'; roundInd.textContent='round 0/10';
+  histRow.innerHTML=''; newEntryIndex=-1;
+  setArena('waiting','⚡','Click to start','10 rounds · click when green');
+  actionBtn.textContent='Start'; actionBtn.disabled=false;
 }
 
-// === LOCAL STORAGE LEADERBOARD ===
-function getSessions() {
-  try {
-    return JSON.parse(localStorage.getItem('rt_sessions') || '[]');
-  } catch { return []; }
-}
+function getSessions() { try { return JSON.parse(localStorage.getItem('rt_sessions')||'[]'); } catch { return []; } }
 
-function saveSession(score, avg, best) {
+function saveSession(sc, avg, best) {
   const sessions = getSessions();
-  const entry = {
-    score,
-    avg,
-    best,
-    date: new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short' })
-  };
-  sessions.push(entry);
-  sessions.sort((a, b) => a.score - b.score);
-  if (sessions.length > 10) sessions.pop();
-  newEntryIndex = sessions.findIndex(s => s === entry);
-  // Re-find after sort
-  newEntryIndex = sessions.findIndex(s => s.score === score && s.avg === avg && s.date === entry.date);
+  const entry = { score:sc, avg, best, date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) };
+  sessions.push(entry); sessions.sort((a,b)=>a.score-b.score);
+  if (sessions.length>10) sessions.pop();
+  newEntryIndex = sessions.findIndex(s=>s.score===sc&&s.avg===avg&&s.date===entry.date);
   localStorage.setItem('rt_sessions', JSON.stringify(sessions));
   renderLeaderboard();
 }
 
 function renderLeaderboard() {
   const sessions = getSessions();
-  if (!sessions.length) {
-    lbBody.innerHTML = '<div class="no-sessions">no sessions yet — play a full round!</div>';
-    return;
+  if (!sessions.length) { lbBody.innerHTML='<div class="no-sessions">no sessions yet — play a full round!</div>'; return; }
+  lbBody.innerHTML = sessions.map((s,i)=>`
+    <div class="lb-row${i===newEntryIndex?' new-entry':''}">
+      <div class="lb-rank">#${i+1}</div><div class="lb-date">${s.date}</div>
+      <div class="lb-score">${s.score}ms</div><div class="lb-avg">${s.avg}ms avg</div>
+    </div>`).join('');
+}
+renderLeaderboard();
+
+/* ============================================================ AIM TRAINING */
+let aimMode = 'flick';
+let aimRunning = false, aimDone = false;
+let aimHits = 0, aimMisses = 0, trackScore = 0;
+let aimPending = null, aimNewEntry = -1;
+
+// Flick
+const FLICK_TARGETS = 20;
+let flickCount = 0, flickTarget = null;
+
+// Tracking
+const TRACK_DURATION = 30000;
+let trackTarget = {x:0,y:0,r:26,vx:0,vy:0};
+let trackRaf = null, trackLastTime = 0, aimSessionStart = 0;
+let mouseX = -999, mouseY = -999, trackHovering = false;
+
+const aimArena    = document.getElementById('aim-arena');
+const aimCanvas   = document.getElementById('aim-canvas');
+const aimIdle     = document.getElementById('aim-idle');
+const aimIdleMsg  = document.getElementById('aim-idle-msg');
+const aimIdleSub  = document.getElementById('aim-idle-sub');
+const aimStatA    = document.getElementById('aim-stat-a');
+const aimStatB    = document.getElementById('aim-stat-b');
+const aimStatC    = document.getElementById('aim-stat-c');
+const aimLabelA   = document.getElementById('aim-label-a');
+const aimLabelB   = document.getElementById('aim-label-b');
+const aimTimerBar = document.getElementById('aim-timer-bar');
+const aimActionBtn= document.getElementById('aim-action-btn');
+const aimLbBody   = document.getElementById('aim-lb-body');
+
+let ctx = null;
+
+function setAimMode(mode) {
+  if (aimRunning) return;
+  aimMode = mode;
+  document.getElementById('mode-flick').classList.toggle('active', mode==='flick');
+  document.getElementById('mode-track').classList.toggle('active', mode==='track');
+  resetAim(false);
+  if (mode==='flick') {
+    aimLabelA.textContent='hits'; aimLabelB.textContent='misses';
+    aimIdleMsg.textContent='Click to start'; aimIdleSub.textContent='20 targets · click each one fast';
+  } else {
+    aimLabelA.textContent='on target'; aimLabelB.textContent='off target';
+    aimIdleMsg.textContent='Click to start'; aimIdleSub.textContent='30s · keep mouse on the moving target';
   }
-  lbBody.innerHTML = sessions.map((s, i) => `
-    <div class="lb-row${i === newEntryIndex ? ' new-entry' : ''}">
+}
+
+function initCanvas() {
+  const rect = aimArena.getBoundingClientRect();
+  aimCanvas.width  = Math.round(rect.width);
+  aimCanvas.height = Math.round(rect.height);
+  ctx = aimCanvas.getContext('2d');
+}
+
+function startAimGame() {
+  if (aimRunning) return;
+  aimArena.classList.remove('idle');
+  aimArena.classList.add('active');
+  aimIdle.style.display = 'none';
+  aimCanvas.style.display = 'block';
+  initCanvas();
+  aimRunning = true; aimDone = false;
+  aimHits = 0; aimMisses = 0; trackScore = 0; flickCount = 0; flickTarget = null;
+  mouseX = -999; mouseY = -999; trackHovering = false;
+  aimActionBtn.textContent = 'Running...'; aimActionBtn.disabled = true;
+  updateAimStats();
+
+  if (aimMode === 'flick') {
+    aimCanvas.addEventListener('click', onFlickClick);
+    aimCanvas.addEventListener('mousemove', onAimMouseMove);
+    spawnFlickTarget();
+    aimTimerBar.style.width = '100%'; aimTimerBar.style.background = 'var(--blue)';
+  } else {
+    aimCanvas.addEventListener('mousemove', onAimMouseMove);
+    spawnTrackTarget();
+    aimSessionStart = performance.now(); trackLastTime = aimSessionStart;
+    trackRaf = requestAnimationFrame(trackingLoop);
+  }
+}
+
+/* ------ FLICK ------ */
+function spawnFlickTarget() {
+  if (!aimRunning) return;
+  const pad = 36, r = 20 + Math.random() * 14;
+  const x = pad + r + Math.random() * (aimCanvas.width  - 2*(pad+r));
+  const y = pad + r + Math.random() * (aimCanvas.height - 2*(pad+r));
+  flickTarget = { x, y, r, born: performance.now() };
+  flickTarget._timeout = setTimeout(() => {
+    if (flickTarget && aimRunning) { aimMisses++; updateAimStats(); flashCanvas(flickTarget.x, flickTarget.y, false); checkFlickDone(); }
+  }, 2500);
+  drawFlickFrame();
+  // progress bar as target timer
+  let barRaf;
+  function animBar(now) {
+    if (!flickTarget || !aimRunning) return;
+    const elapsed = now - flickTarget.born;
+    const pct = Math.max(0, 100 - (elapsed / 2500) * 100);
+    aimTimerBar.style.width = pct + '%';
+    aimTimerBar.style.background = pct < 30 ? '#E24B4A' : pct < 60 ? '#BA7517' : 'var(--blue)';
+    barRaf = requestAnimationFrame(animBar);
+  }
+  flickTarget._barRaf = requestAnimationFrame(animBar);
+}
+
+function drawFlickFrame() {
+  if (!ctx || !flickTarget) return;
+  ctx.clearRect(0, 0, aimCanvas.width, aimCanvas.height);
+  const {x, y, r} = flickTarget;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(24,95,165,0.18)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(x, y, r*0.55, 0, Math.PI*2);
+  ctx.fillStyle = '#185FA5'; ctx.fill();
+  ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2);
+  ctx.fillStyle = '#fff'; ctx.fill();
+  // crosshair lines
+  ctx.strokeStyle = 'rgba(24,95,165,0.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x-r-6,y); ctx.lineTo(x+r+6,y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x,y-r-6); ctx.lineTo(x,y+r+6); ctx.stroke();
+  // cursor dot
+  if (mouseX > 0) {
+    ctx.beginPath(); ctx.arc(mouseX, mouseY, 4, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fill();
+  }
+}
+
+function onFlickClick(e) {
+  if (!flickTarget || !aimRunning) return;
+  const pos = getCanvasPos(e);
+  const dx = pos.x - flickTarget.x, dy = pos.y - flickTarget.y;
+  const dist = Math.sqrt(dx*dx+dy*dy);
+  clearTimeout(flickTarget._timeout);
+  cancelAnimationFrame(flickTarget._barRaf);
+  const hit = dist <= flickTarget.r * 1.25;
+  if (hit) aimHits++; else aimMisses++;
+  flashCanvas(hit ? flickTarget.x : pos.x, hit ? flickTarget.y : pos.y, hit);
+  flickTarget = null;
+  updateAimStats();
+  checkFlickDone();
+}
+
+function checkFlickDone() {
+  if (aimHits + aimMisses >= FLICK_TARGETS) { finishAim(); return; }
+  setTimeout(spawnFlickTarget, 150);
+}
+
+function flashCanvas(x, y, hit) {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, aimCanvas.width, aimCanvas.height);
+  ctx.beginPath(); ctx.arc(x, y, hit?30:18, 0, Math.PI*2);
+  ctx.fillStyle = hit ? 'rgba(29,158,117,0.35)' : 'rgba(226,75,74,0.3)'; ctx.fill();
+}
+
+/* ------ TRACKING ------ */
+function spawnTrackTarget() {
+  const r = 26;
+  trackTarget.x = r+30 + Math.random()*(aimCanvas.width-2*(r+30));
+  trackTarget.y = r+30 + Math.random()*(aimCanvas.height-2*(r+30));
+  trackTarget.r = r;
+  const speed = 100 + Math.random()*80;
+  const angle = Math.random()*Math.PI*2;
+  trackTarget.vx = Math.cos(angle)*speed;
+  trackTarget.vy = Math.sin(angle)*speed;
+}
+
+function trackingLoop(now) {
+  if (!aimRunning) return;
+  const dt = Math.min((now - trackLastTime) / 1000, 0.05);
+  trackLastTime = now;
+  const elapsed = now - aimSessionStart;
+  const timeLeft = Math.max(0, TRACK_DURATION - elapsed);
+  const pct = (timeLeft / TRACK_DURATION) * 100;
+  aimTimerBar.style.width = pct + '%';
+  aimTimerBar.style.background = pct<25?'#E24B4A':pct<50?'#BA7517':'var(--blue)';
+
+  trackTarget.x += trackTarget.vx * dt;
+  trackTarget.y += trackTarget.vy * dt;
+  if (trackTarget.x - trackTarget.r < 0) { trackTarget.x=trackTarget.r; trackTarget.vx*=-1; }
+  if (trackTarget.x + trackTarget.r > aimCanvas.width) { trackTarget.x=aimCanvas.width-trackTarget.r; trackTarget.vx*=-1; }
+  if (trackTarget.y - trackTarget.r < 0) { trackTarget.y=trackTarget.r; trackTarget.vy*=-1; }
+  if (trackTarget.y + trackTarget.r > aimCanvas.height) { trackTarget.y=aimCanvas.height-trackTarget.r; trackTarget.vy*=-1; }
+  if (Math.random() < 0.005) {
+    const spd = Math.sqrt(trackTarget.vx**2+trackTarget.vy**2);
+    const a = Math.random()*Math.PI*2;
+    trackTarget.vx = Math.cos(a)*spd; trackTarget.vy = Math.sin(a)*spd;
+  }
+
+  const dx = mouseX - trackTarget.x, dy = mouseY - trackTarget.y;
+  trackHovering = Math.sqrt(dx*dx+dy*dy) <= trackTarget.r;
+  if (trackHovering) trackScore += dt*1000;
+
+  aimHits = Math.round(trackScore);
+  aimMisses = Math.round(Math.max(0, elapsed - trackScore));
+  updateAimStats();
+  drawTrackFrame();
+
+  if (timeLeft <= 0) { finishAim(); return; }
+  trackRaf = requestAnimationFrame(trackingLoop);
+}
+
+function drawTrackFrame() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, aimCanvas.width, aimCanvas.height);
+  const {x, y, r} = trackTarget;
+  // outer ring
+  ctx.beginPath(); ctx.arc(x, y, r+7, 0, Math.PI*2);
+  ctx.strokeStyle = trackHovering ? 'rgba(29,158,117,0.45)' : 'rgba(24,95,165,0.22)';
+  ctx.lineWidth = 2; ctx.stroke();
+  // fill
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = trackHovering ? 'rgba(29,158,117,0.2)' : 'rgba(24,95,165,0.15)'; ctx.fill();
+  // inner dot
+  ctx.beginPath(); ctx.arc(x, y, r*0.4, 0, Math.PI*2);
+  ctx.fillStyle = trackHovering ? '#1D9E75' : '#185FA5'; ctx.fill();
+  ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#fff'; ctx.fill();
+  // cursor
+  if (mouseX > 0) {
+    ctx.beginPath(); ctx.arc(mouseX, mouseY, 6, 0, Math.PI*2);
+    ctx.strokeStyle = trackHovering ? '#1D9E75' : 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1.5; ctx.stroke();
+    // crosshair
+    ctx.strokeStyle = trackHovering ? 'rgba(29,158,117,0.5)' : 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mouseX-10,mouseY); ctx.lineTo(mouseX+10,mouseY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mouseX,mouseY-10); ctx.lineTo(mouseX,mouseY+10); ctx.stroke();
+  }
+}
+
+function onAimMouseMove(e) {
+  const pos = getCanvasPos(e);
+  mouseX = pos.x; mouseY = pos.y;
+  if (aimMode==='flick' && flickTarget) drawFlickFrame();
+}
+
+function getCanvasPos(e) {
+  const rect = aimCanvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (aimCanvas.width / rect.width),
+    y: (e.clientY - rect.top)  * (aimCanvas.height / rect.height)
+  };
+}
+
+function updateAimStats() {
+  if (aimMode === 'flick') {
+    const total = aimHits + aimMisses;
+    aimStatA.textContent = aimHits;
+    aimStatB.textContent = aimMisses;
+    aimStatC.textContent = total > 0 ? Math.round((aimHits/total)*100)+'%' : '—';
+  } else {
+    const elapsed = aimSessionStart > 0 ? Math.min(TRACK_DURATION, performance.now()-aimSessionStart) : 0;
+    aimStatA.textContent = (trackScore/1000).toFixed(1)+'s';
+    aimStatB.textContent = ((Math.max(0,elapsed-trackScore))/1000).toFixed(1)+'s';
+    aimStatC.textContent = elapsed > 0 ? Math.round((trackScore/elapsed)*100)+'%' : '—';
+  }
+}
+
+function finishAim() {
+  aimRunning = false;
+  cancelAnimationFrame(trackRaf);
+  aimCanvas.removeEventListener('click', onFlickClick);
+  aimCanvas.removeEventListener('mousemove', onAimMouseMove);
+  if (flickTarget) { clearTimeout(flickTarget._timeout); cancelAnimationFrame(flickTarget._barRaf); flickTarget = null; }
+
+  let acc;
+  if (aimMode==='flick') {
+    const total = aimHits+aimMisses; acc = total>0?Math.round((aimHits/total)*100):0;
+  } else {
+    const elapsed = Math.min(TRACK_DURATION, performance.now()-aimSessionStart);
+    acc = elapsed>0?Math.round((trackScore/elapsed)*100):0;
+  }
+
+  // draw result on canvas
+  if (ctx) {
+    ctx.clearRect(0, 0, aimCanvas.width, aimCanvas.height);
+    const cx = aimCanvas.width/2, cy = aimCanvas.height/2;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = acc>=70?'#1D9E75':acc>=40?'#BA7517':'#E24B4A';
+    ctx.font = '700 56px Space Mono, monospace';
+    ctx.fillText(acc+'%', cx, cy+12);
+    ctx.fillStyle = 'rgba(107,107,102,0.9)';
+    ctx.font = '600 15px Syne, sans-serif';
+    ctx.fillText('accuracy  ·  click Play again to retry', cx, cy+42);
+  }
+
+  aimTimerBar.style.width = '0%';
+  aimActionBtn.textContent = 'Play again';
+  aimActionBtn.disabled = false;
+  aimActionBtn.onclick = () => { aimActionBtn.onclick = startAimGame; resetAim(false, true); };
+  aimDone = true;
+
+  if (aimPending) saveAimSession(aimPending.mode, aimPending.acc, aimPending.hits, aimPending.misses);
+  aimPending = { mode: aimMode, acc, hits: aimHits, misses: aimMisses };
+}
+
+function resetAim(savePending, playAgain) {
+  if (savePending && aimPending) saveAimSession(aimPending.mode, aimPending.acc, aimPending.hits, aimPending.misses);
+  if (!playAgain) aimPending = null;
+  cancelAnimationFrame(trackRaf);
+  aimCanvas.removeEventListener('click', onFlickClick);
+  aimCanvas.removeEventListener('mousemove', onAimMouseMove);
+  if (flickTarget) { clearTimeout(flickTarget._timeout); cancelAnimationFrame(flickTarget._barRaf); flickTarget = null; }
+  aimRunning = false; aimDone = false;
+  aimHits=0; aimMisses=0; trackScore=0; mouseX=-999; mouseY=-999; trackHovering=false;
+  aimStatA.textContent='—'; aimStatB.textContent='—'; aimStatC.textContent='—';
+  aimTimerBar.style.width='100%'; aimTimerBar.style.background='var(--blue)';
+  aimArena.classList.add('idle'); aimArena.classList.remove('active');
+  aimIdle.style.display='block'; aimCanvas.style.display='none';
+  if (ctx) ctx.clearRect(0, 0, aimCanvas.width, aimCanvas.height);
+  aimActionBtn.textContent='Start'; aimActionBtn.disabled=false; aimActionBtn.onclick=startAimGame;
+}
+
+/* ------ AIM LEADERBOARD ------ */
+function getAimSessions() { try { return JSON.parse(localStorage.getItem('aim_sessions')||'[]'); } catch { return []; } }
+
+function saveAimSession(mode, acc, hits, misses) {
+  const sessions = getAimSessions();
+  const entry = { mode, acc, hits, misses, date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) };
+  sessions.push(entry); sessions.sort((a,b)=>b.acc-a.acc);
+  if (sessions.length>10) sessions.pop();
+  aimNewEntry = sessions.findIndex(s=>s.acc===acc&&s.mode===mode&&s.date===entry.date);
+  localStorage.setItem('aim_sessions', JSON.stringify(sessions));
+  renderAimLeaderboard();
+}
+
+function renderAimLeaderboard() {
+  const sessions = getAimSessions();
+  if (!sessions.length) { aimLbBody.innerHTML='<div class="no-sessions">no sessions yet — finish a round!</div>'; return; }
+  aimLbBody.innerHTML = sessions.map((s,i)=>`
+    <div class="aim-lb-row${i===aimNewEntry?' new-entry':''}">
       <div class="lb-rank">#${i+1}</div>
       <div class="lb-date">${s.date}</div>
-      <div class="lb-score">${s.score}ms</div>
-      <div class="lb-avg">${s.avg}ms avg</div>
-    </div>
-  `).join('');
+      <div style="font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">${s.mode}</div>
+      <div class="lb-score" style="color:var(--green);text-align:right">${s.acc}%</div>
+      <div class="lb-avg">${s.hits}/${s.hits+s.misses}</div>
+    </div>`).join('');
 }
-
-function clearLeaderboard() {
-  localStorage.removeItem('rt_sessions');
-  newEntryIndex = -1;
-  renderLeaderboard();
-}
-
-// Init
-renderLeaderboard();
+renderAimLeaderboard();
 </script>
 </body>
 </html>
